@@ -1,0 +1,40 @@
+#assignment 4
+#maggie Hall
+#Create a Python file that utilizes maya.cmds 
+#and demonstrates accessing an environment variable set in Bash
+
+import os
+import maya.cmds as cmds
+
+
+
+
+
+
+#retreiving ennvironment variables
+shot = os.getenv('SHOT')
+projectDirectory = os.getenv('PROJECT_DIR')
+task = os.getenv('TASK')
+
+#setting directory using environemtn variable
+cmds.workspace(dir=projectDirectory)
+print(f'Maya project directory set to: {projectDirectory}')
+
+#Create maya project suubfolders
+cmds.workspace(fileRule=['scene', 'scenes'])
+cmds.workspace(fileRule=['sourceImages', 'sourceimages'])
+cmds.workspace(fileRule=['images', 'images'])
+cmds.workspace(fileRule=['clips', 'clips'])
+cmds.workspace(fileRule=['sound', 'sound'])
+cmds.workspace(fileRule=['scripts', 'python'])
+cmds.workspace(fileRule=['cache', 'cache'])
+cmds.workspace(fileRule=['autosave', 'autosave'])
+
+folders = ['scenes', 'sourceimages', 'images', 'clips', 'sound', 'python', 'cache', 'autosave']
+for folder in folders:
+    folderPath = os.path.join(projectDirectory, folder)
+    if not os.path.exists(folderPath):
+        os.makedirs(folderPath)
+        print(f'Created folder: {folderPath}')
+    else:
+        print(f'Folder already exists: {folderPath}')

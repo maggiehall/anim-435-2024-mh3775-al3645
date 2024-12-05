@@ -1,8 +1,13 @@
 #final project
 #prop rig
+#TO PROPERLY USE THIS
+    # define environement variable ASSET
+    #open maya after defining environment variable in gitbash
+
 
 #import required methods
 import maya.cmds as cmds
+import os
 from maya import OpenMayaUI as omui  
 from PySide6.QtCore import *  
 from PySide6.QtGui import *  
@@ -37,5 +42,25 @@ class propRigWidget(QWidget):
         self.ui = loader.load(file, parentWidget=self)         
         file.close()
 
+        # Connect buttons to methods
+        self.ui.createGroup.clicked.connect(self.createGroup)
+        self.ui.placeLocators.clicked.connect(self.placeLocators)
+        self.ui.buildRig.clicked.connect(self.buildRig)
+     
+    def createGroup(self):
+        # Retrieve asset name from the environment variable
+        assetName = os.getenv("ASSET", "defaultAsset")  # Fallback to "defaultAsset" if ASSET is not set
+        groupName = f"GRP_{assetName}"
+       
+        # Create the group hierarchy in Maya
+        if not cmds.objExists(groupName):
+            parentGroup = cmds.group(em=True, name=groupName)
+            cmds.group(em=True, name=f"{groupName}_geom", parent=parentGroup)
+            cmds.group(em=True, name=f"{groupName}_rig", parent=parentGroup)
+            cmds.warning(f"Group hierarchy created for asset: {assetName}")
+        else:
+            cmds.warning(f"Group hierarchy already exists for asset: {assetName}")
+
+# Instantiate and show the widget
 myWidget = propRigWidget()      
 myWidget.show()
