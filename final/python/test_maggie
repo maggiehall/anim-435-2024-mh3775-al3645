@@ -1,40 +1,71 @@
-#assignment 4
-#maggie Hall
-#Create a Python file that utilizes maya.cmds 
-#and demonstrates accessing an environment variable set in Bash
+#final project
+#prop rig
 
-import os
+#TO PROPERLY USE THIS
+    # define environement variable ASSET
+        # in gitbash use: export ASSET="yournamehere"
+    #open maya after defining environment variable in gitbash
+        #open maya:   /c/Program\ Files/Autodesk/Maya2025/bin/maya.exe
+
+
+#import required methods
 import maya.cmds as cmds
+import os
+from maya import OpenMayaUI as omui  
+from PySide6.QtCore import *  
+from PySide6.QtGui import *  
+from PySide6.QtWidgets import * 
+from PySide6.QtUiTools import * 
+from shiboken6 import wrapInstance
 
+#get maya main window
+mayaMainWindowPtr = omui.MQtUtil.mainWindow() 
+mayaMainWindow = wrapInstance(int(mayaMainWindowPtr), QWidget)
 
+# define the widget
+class propRigWidget(QWidget):     
+    def __init__(self, *args, **kwargs):         
+        super(propRigWidget, self).__init__(*args, **kwargs) 
+         
+        #Parent widget under Maya main window         
+        self.setParent(mayaMainWindow)         
+        self.setWindowFlags(Qt.Window)    
+         
+        #Set the object name      
+        self.setWindowTitle('Prop Rig Widget')         
+        self.setGeometry(250, 250, 425, 250)      # Change your window size here 
+         
+        self.initUI()   
+          
+    def initUI(self):         
+        loader = QUiLoader()               
+        file = QFile(r"C:\Users\maggi\OneDrive - Drexel University\Year3\fallWinter\techDirecting\anim-435-2024-mh3775-al3645\final\ui\final.ui" ) # Add your C:\path to your .UI file 
+        
+        file.open(QFile.ReadOnly)
+        self.ui = loader.load(file, parentWidget=self)         
+        file.close()
 
+        # Connect buttons to methods
+        self.ui.createGroup.clicked.connect(self.createGroup)
+        #temorarily commenting these out until we finish ccode for them
+        #self.ui.placeLocators.clicked.connect(self.placeLocators)
+        #self.ui.buildRig.clicked.connect(self.buildRig)
+     
+    def createGroup(self):
+        # Retrieve asset name from the environment variable
+        assetName = os.getenv("ASSET", "defaultAsset")  # Fallback to "defaultAsset" if ASSET is not set
+        groupName = f"GRP_{assetName}"
+       
+        # Create the group hierarchy in Maya
+        if not cmds.objExists(groupName):
+            parentGroup = cmds.group(em=True, name=groupName)
+            cmds.group(em=True, name=f"{groupName}_geom", parent=parentGroup)
+            cmds.group(em=True, name=f"{groupName}_rig", parent=parentGroup)
+            cmds.warning(f"Group hierarchy created for asset: {assetName}")
+        else:
+            cmds.warning(f"Group hierarchy already exists for asset: {assetName}")
 
+# Instantiate and show the widget
+myWidget = propRigWidget()      
+myWidget.show()
 
-
-#retreiving ennvironment variables
-shot = os.getenv('SHOT')
-projectDirectory = os.getenv('PROJECT_DIR')
-task = os.getenv('TASK')
-
-#setting directory using environemtn variable
-cmds.workspace(dir=projectDirectory)
-print(f'Maya project directory set to: {projectDirectory}')
-
-#Create maya project suubfolders
-cmds.workspace(fileRule=['scene', 'scenes'])
-cmds.workspace(fileRule=['sourceImages', 'sourceimages'])
-cmds.workspace(fileRule=['images', 'images'])
-cmds.workspace(fileRule=['clips', 'clips'])
-cmds.workspace(fileRule=['sound', 'sound'])
-cmds.workspace(fileRule=['scripts', 'python'])
-cmds.workspace(fileRule=['cache', 'cache'])
-cmds.workspace(fileRule=['autosave', 'autosave'])
-
-folders = ['scenes', 'sourceimages', 'images', 'clips', 'sound', 'python', 'cache', 'autosave']
-for folder in folders:
-    folderPath = os.path.join(projectDirectory, folder)
-    if not os.path.exists(folderPath):
-        os.makedirs(folderPath)
-        print(f'Created folder: {folderPath}')
-    else:
-        print(f'Folder already exists: {folderPath}')
