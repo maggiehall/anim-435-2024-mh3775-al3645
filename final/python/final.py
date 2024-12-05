@@ -1,8 +1,11 @@
 #final project
 #prop rig
+
 #TO PROPERLY USE THIS
     # define environement variable ASSET
+        # in gitbash use: export ASSET="yournamehere"
     #open maya after defining environment variable in gitbash
+        #open maya:   /c/Program\ Files/Autodesk/Maya2025/bin/maya.exe
 
 
 #import required methods
@@ -44,8 +47,9 @@ class propRigWidget(QWidget):
 
         # Connect buttons to methods
         self.ui.createGroup.clicked.connect(self.createGroup)
-        self.ui.placeLocators.clicked.connect(self.placeLocators)
-        self.ui.buildRig.clicked.connect(self.buildRig)
+        #temorarily commenting these out until we finish ccode for them
+        #self.ui.placeLocators.clicked.connect(self.placeLocators)
+        #self.ui.buildRig.clicked.connect(self.buildRig)
      
     def createGroup(self):
         # Retrieve asset name from the environment variable
