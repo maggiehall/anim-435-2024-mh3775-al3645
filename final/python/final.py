@@ -52,21 +52,25 @@ class propRigWidget(QWidget):
         #self.ui.buildRig.clicked.connect(self.buildRig)
      
     def createGroup(self):
-        # Retrieve asset name from the environment variable
-        assetName = os.getenv("ASSET", "defaultAsset")  # Fallback to "defaultAsset" if ASSET is not set
-        groupName = f"GRP_{assetName}"
+        #Take selection and create selectedObject variable
         selectedObject = cmds.ls(sl=1)
         if selectedObject == False:
             print('No object is selected. Script Ended.')
-       
-        # Create the group hierarchy in Maya
-        if not cmds.objExists(groupName):
-            parentGroup = cmds.group(em=True, name=groupName)
-            cmds.group(slectedObject, name=f"{groupName}_geom", parent=parentGroup)
-            cmds.group(em=True, name=f"{groupName}_rig", parent=parentGroup)
-            cmds.warning(f"Group hierarchy created for asset: {assetName}")
+        
+        #Get asset name from environmental variable
+        assetName = os.getenv('ASSET')
+        #If environmental name is not found the name is defaulted.
+        if assetName == True:
+            print('Yes')
         else:
-            cmds.warning(f"Group hierarchy already exists for asset: {assetName}")
+            print('Asset Name not found. Name is defaulted.')
+            assetName = 'default'
+        
+        #Create Groups
+        cmds.group(selectedObject, name='GRP_geom')
+        cmds.group(em=True, name='GRP_rig')
+        cmds.group('GRP_geom','GRP_rig', name=assetName)
+
 
 # Instantiate and show the widget
 myWidget = propRigWidget()      
