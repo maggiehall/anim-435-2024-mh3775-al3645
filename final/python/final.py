@@ -39,7 +39,9 @@ class propRigWidget(QWidget):
           
     def initUI(self):         
         loader = QUiLoader()               
+        #`COMMENT OUT FILE PATHS!
         file = QFile(r"C:\Users\maggi\OneDrive - Drexel University\Year3\fallWinter\techDirecting\anim-435-2024-mh3775-al3645\final\ui\final.ui" ) # Add your C:\path to your .UI file 
+        #file = QFile(r"C:\Users\ajluc\OneDrive - Drexel University\Year 3\Fall 2024\ANIM435- Pipeline Direction for Animation\anim-435-2024-al3645\final\anim-435-2024-mh3775-al3645\final\ui\final.ui")
         
         file.open(QFile.ReadOnly)
         self.ui = loader.load(file, parentWidget=self)         
