@@ -22,17 +22,25 @@ cmds.group(em=True, name='GRP_rig')
 cmds.group('GRP_geom','GRP_rig', name=assetName)
 
 #LOCATOR MODULE
+if not cmds.objExists('LOC_root') and not cmds.objExists('LOC_base') and not cmds.objExists('LOC_move'):
+    #Creates locators
+    locRoot = cmds.spaceLocator(name='LOC_root')
+    locBase = cmds.spaceLocator(name='LOC_base')
+    locMove = cmds.spaceLocator(name='LOC_move')
+    #Creates labels
+    labelRoot = cmds.annotate(locRoot, text="LOC_root")
+    labelBase = cmds.annotate(locBase, text="LOC_base")
+    labelMove = cmds.annotate(locMove, text="LOC_move")
+    #Groups labels together
+    cmds.group(labelRoot, labelBase, labelMove, name='LOC_label_grp')
+    #Parents labels to locators
+    cmds.parent(labelRoot, locRoot, relative=True, shape=True)
+    cmds.parent(labelBase, locBase, relative=True, shape=True)
+    cmds.parent(labelMove, locMove, relative=True, shape=True)
+    #Moves locators for readability
+    cmds.xform(locRoot, worldSpace=True, translation=(-2,0,0))
+    cmds.xform(locMove, worldSpace=True, translation=(2,0,0))
+else:
+    print('ERROR: Rigging Locators already exist.')
 
-locRoot = cmds.spaceLocator(name='LOC_root',position=(0,0,0))
-locBase = cmds.spaceLocator(name='LOC_base',position=(0,0,0))
-locMove = cmds.spaceLocator(name='LOC_move',position=(0,0,0))
 
-
-
-labelRoot = cmds.annotate(locRoot, text="LOC_root", point=(-2,0,0))
-labelBase = cmds.annotate(locBase, text="LOC_base", point=(0,0,0))
-labelMove = cmds.annotate(locMove, text="LOC_move", point=(2,0,0))
-
-cmds.parent(labelRoot, locRoot, relative=True)
-cmds.parent(labelBase, locBase, relative=True)
-cmds.parent(labelMove, locMove, relative=True)
