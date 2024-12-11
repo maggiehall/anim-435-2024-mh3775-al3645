@@ -40,8 +40,8 @@ class propRigWidget(QWidget):
     def initUI(self):         
         loader = QUiLoader()               
         #COMMENT OUT FILE PATHS!
-        #file = QFile(r"C:\Users\maggi\OneDrive - Drexel University\Year3\fallWinter\techDirecting\anim-435-2024-mh3775-al3645\final\ui\final.ui" ) # Add your C:\path to your .UI file 
-        file = QFile(r"C:\Users\ajluc\OneDrive - Drexel University\Year 3\Fall 2024\ANIM435- Pipeline Direction for Animation\anim-435-2024-al3645\final\anim-435-2024-mh3775-al3645\final\ui\final.ui")
+        file = QFile(r"C:\Users\maggi\OneDrive - Drexel University\Year3\fallWinter\techDirecting\anim-435-2024-mh3775-al3645\final\ui\final.ui" ) # Add your C:\path to your .UI file 
+        #file = QFile(r"C:\Users\ajluc\OneDrive - Drexel University\Year 3\Fall 2024\ANIM435- Pipeline Direction for Animation\anim-435-2024-al3645\final\anim-435-2024-mh3775-al3645\final\ui\final.ui")
         
         file.open(QFile.ReadOnly)
         self.ui = loader.load(file, parentWidget=self)         
@@ -50,8 +50,7 @@ class propRigWidget(QWidget):
         # Connect buttons to methods
         self.ui.createGroup.clicked.connect(self.createGroup)
         self.ui.placeLocators.clicked.connect(self.placeLocators)
-        #temorarily commenting these out until we finish ccode for them
-        #self.ui.buildRig.clicked.connect(self.buildRig)
+        self.ui.buildRig.clicked.connect(self.buildRig)
      
     def createGroup(self):
         # Retrieve asset name from the environment variable
@@ -91,6 +90,43 @@ class propRigWidget(QWidget):
         else:
             print('ERROR: Rigging Locators already exist.')
 
+    def buildRig(self):
+        #joint placement module
+        #test if joints already exits
+        if not cmds.objExists('JNT_root') and not cmds.objExists('JNT_base') and not cmds.objExists('JNT_move'):  
+            #check for locators
+            if cmds.objExists('LOC_root') and cmds.objExists('LOC_base') and cmds.objExists('LOC_move'):
+                #get locator position
+                rootPos = cmds.xform('LOC_root', query=True, worldSpace=True, translation=True)
+                basePos = cmds.xform('LOC_base', query=True, worldSpace=True, translation=True)
+                movePos = cmds.xform('LOC_move', query=True, worldSpace=True, translation=True)
+
+                # Create joints
+                jntRoot = cmds.joint(name='JNT_root', position=rootPos)
+                jntBase = cmds.joint(name='JNT_base', position=basePos)
+                jntMove = cmds.joint(name='JNT_move', position=movePos)
+
+                #parent joints un "GRP_rig"
+                if cmds.objExists('GRP_rig'):
+                    cmds.parent(jntRoot, 'GRP_rig')
+                else:
+                    print("ERROR: 'GRP_rig' group does not exist. Please press 'Create Group' first.")
+            else:
+                print("ERROR: Locators do not exist. Please run 'Place Locators' first.")
+
+        else:
+            # If joints exist, update their positions to match locators
+            if cmds.objExists('LOC_root') and cmds.objExists('LOC_base') and cmds.objExists('LOC_move'):
+                rootPos = cmds.xform('LOC_root', query=True, worldSpace=True, translation=True)
+                basePos = cmds.xform('LOC_base', query=True, worldSpace=True, translation=True)
+                movePos = cmds.xform('LOC_move', query=True, worldSpace=True, translation=True)
+                
+                # Move existing joints
+                cmds.xform('JNT_root', worldSpace=True, translation=rootPos)
+                cmds.xform('JNT_base', worldSpace=True, translation=basePos)
+                cmds.xform('JNT_move', worldSpace=True, translation=movePos)
+            else:
+                print("ERROR: Locators do not exist. Cannot update joint positions.")
 
 # Instantiate and show the widget
 myWidget = propRigWidget()      
