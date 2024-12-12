@@ -26,17 +26,17 @@ To use this python code, the environment variable must be defined in GitBash and
 
 ## final setup
 JNT_root
-    ┗ JNT_base
-              ┗ JNT_move
+    JNT_base
+        JNT_move
 
-So the final asset structure will look like:
+Final asset structure will look like:
 
-GRP_<ASSET>        # Asset name from environment variable set in Bash
-    ┗ GRP_geom
-            ┗ mesh1
-            ┗ mesh2
-            ┗ ...
-    ┗ GRP_rig
-             ┗JNT_root
-                    ┗ JNT_base
-                           ┗ JNT_move
+GRP_<ASSET>
+    GRP_geom
+        mesh1
+        mesh2
+        mesh#...
+    GRP_rig
+        JNT_root
+        JNT_base
+        JNT_move
