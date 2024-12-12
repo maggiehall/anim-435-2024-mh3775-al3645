@@ -89,6 +89,44 @@ class propRigWidget(QWidget):
             cmds.xform(locMove, worldSpace=True, translation=(2,0,0))
         else:
             print('ERROR: Rigging Locators already exist.')
+            
+    def buildRig(self):
+        #joint placement module
+        #test if joints already exits
+        if not cmds.objExists('JNT_root') and not cmds.objExists('JNT_base') and not cmds.objExists('JNT_move'):  
+            #check for locators
+            if cmds.objExists('LOC_root') and cmds.objExists('LOC_base') and cmds.objExists('LOC_move'):
+                #get locator position
+                rootPos = cmds.xform('LOC_root', query=True, worldSpace=True, translation=True)
+                basePos = cmds.xform('LOC_base', query=True, worldSpace=True, translation=True)
+                movePos = cmds.xform('LOC_move', query=True, worldSpace=True, translation=True)
+
+                # Create joints
+                jntRoot = cmds.joint(name='JNT_root', position=rootPos)
+                jntBase = cmds.joint(name='JNT_base', position=basePos)
+                jntMove = cmds.joint(name='JNT_move', position=movePos)
+
+                #parent joints un "GRP_rig"
+                if cmds.objExists('GRP_rig'):
+                    cmds.parent(jntRoot, 'GRP_rig')
+                else:
+                    print("ERROR: 'GRP_rig' group does not exist. Please press 'Create Group' first.")
+            else:
+                print("ERROR: Locators do not exist. Please run 'Place Locators' first.")
+
+        else:
+            # If joints exist, update their positions to match locators
+            if cmds.objExists('LOC_root') and cmds.objExists('LOC_base') and cmds.objExists('LOC_move'):
+                rootPos = cmds.xform('LOC_root', query=True, worldSpace=True, translation=True)
+                basePos = cmds.xform('LOC_base', query=True, worldSpace=True, translation=True)
+                movePos = cmds.xform('LOC_move', query=True, worldSpace=True, translation=True)
+                
+                # Move existing joints
+                cmds.xform('JNT_root', worldSpace=True, translation=rootPos)
+                cmds.xform('JNT_base', worldSpace=True, translation=basePos)
+                cmds.xform('JNT_move', worldSpace=True, translation=movePos)
+            else:
+                print("ERROR: Locators do not exist. Cannot update joint positions.")
 
 
 # Instantiate and show the widget
