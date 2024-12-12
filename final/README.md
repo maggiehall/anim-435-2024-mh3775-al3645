@@ -25,6 +25,7 @@ To use this python code, the environment variable must be defined in GitBash and
 ```
 
 ## final setup
+```python
 JNT_root
     JNT_base
         JNT_move
@@ -40,3 +41,4 @@ GRP_<ASSET>
         JNT_root
         JNT_base
         JNT_move
+```
